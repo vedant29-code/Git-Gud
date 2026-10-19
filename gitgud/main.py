@@ -133,13 +133,31 @@ def main() -> int:
         help="Print verbose LLM response and prompt metadata",
     )
 
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=None,
+        help="Override model name (e.g. gemma3:4b, phi3, llama3.2:3b)",
+    )
+    parser.add_argument(
+        "--roast-level",
+        type=str,
+        choices=["mild", "spicy", "savage"],
+        default=None,
+        help="Override roast level (mild, spicy, savage)",
+    )
+
     subparsers = parser.add_subparsers(dest="subcommand")
 
     # 'run' subcommand
-    subparsers.add_parser("run", help="Run pre-commit check on staged diff (default)")
+    run_parser = subparsers.add_parser("run", help="Run pre-commit check on staged diff (default)")
+    run_parser.add_argument("--model", type=str, default=None, help="Override model name")
+    run_parser.add_argument("--roast-level", choices=["mild", "spicy", "savage"], default=None)
 
     # 'check' subcommand
     check_parser = subparsers.add_parser("check", help="Dry-run judgment on staged changes")
+    check_parser.add_argument("--model", type=str, default=None, help="Override model name")
+    check_parser.add_argument("--roast-level", choices=["mild", "spicy", "savage"], default=None)
     check_parser.add_argument("--explain", action="store_true", help="Print verbose LLM response")
 
     # 'config' subcommand
@@ -148,6 +166,15 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config()
+
+    # CLI flag overrides
+    model_override = getattr(args, "model", None)
+    if model_override:
+        config.model = model_override
+
+    roast_override = getattr(args, "roast_level", None)
+    if roast_override:
+        config.roast_level = roast_override
 
     if args.subcommand == "config":
         cmd_config(config)
