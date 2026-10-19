@@ -1,0 +1,67 @@
+#!/bin/sh
+# Git-Gud AI: The Pre-Commit Judge & Jury
+# POSIX-compliant hook wrapper for Linux, macOS, and Windows Git Bash
+
+# 1. Run legacy/chained pre-commit hook if present
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+LEGACY_HOOK="$HOOK_DIR/pre-commit.legacy"
+
+if [ -f "$LEGACY_HOOK" ] && [ -x "$LEGACY_HOOK" ]; then
+    "$LEGACY_HOOK" "$@"
+    LEGACY_EXIT=$?
+    if [ $LEGACY_EXIT -ne 0 ]; then
+        exit $LEGACY_EXIT
+    fi
+fi
+
+# 2. Check bypass environment variable
+if [ "$GITGUD_SKIP" = "1" ] || [ "$GITGUD_SKIP" = "true" ]; then
+    exit 0
+fi
+
+# Ensure UTF-8 output encoding across Windows, macOS, and Linux
+export PYTHONIOENCODING=utf-8
+export PYTHONUTF8=1
+
+# 3. Locate working Python interpreter (Python 3.8+ required)
+PYTHON_BIN=""
+for candidate in python3 python py; do
+    if "$candidate" -c "import sys; sys.exit(0)" >/dev/null 2>&1; then
+        PYTHON_BIN="$candidate"
+        break
+    fi
+done
+
+if [ -z "$PYTHON_BIN" ]; then
+    if py -3 -c "import sys; sys.exit(0)" >/dev/null 2>&1; then
+        PYTHON_BIN="py -3"
+    fi
+fi
+
+if [ -z "$PYTHON_BIN" ]; then
+    echo "[git-gud warning]: No working Python interpreter found. Allowing commit (fail-open policy)." >&2
+    exit 0
+fi
+
+# 4. Resolve Git-Gud entrypoint script
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+MAIN_SCRIPT=""
+if [ -n "$GITGUD_DIR" ] && [ -f "$GITGUD_DIR/gitgud/main.py" ]; then
+    MAIN_SCRIPT="$GITGUD_DIR/gitgud/main.py"
+elif [ -f "$HOOK_DIR/gitgud/main.py" ]; then
+    MAIN_SCRIPT="$HOOK_DIR/gitgud/main.py"
+elif [ -f "$REPO_ROOT/gitgud/main.py" ]; then
+    MAIN_SCRIPT="$REPO_ROOT/gitgud/main.py"
+fi
+
+if [ -z "$MAIN_SCRIPT" ]; then
+    echo "[git-gud warning]: gitgud/main.py not found. Allowing commit (fail-open policy)." >&2
+    exit 0
+fi
+
+# 5. Execute Git-Gud AI pre-commit engine
+$PYTHON_BIN "$MAIN_SCRIPT" run "$@"
+EXIT_CODE=$?
+
+exit $EXIT_CODE

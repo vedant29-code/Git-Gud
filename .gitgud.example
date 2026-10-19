@@ -1,0 +1,33 @@
+# Git-Gud AI Configuration Example (.gitgud)
+# Place this file in the root of your git repository as `.gitgud`
+
+# Model to use in Ollama (default: phi3, alternative: llama3.2:3b)
+model = phi3
+
+# Ollama server host URL
+host = http://localhost:11434
+
+# Total generation timeout in seconds (default: 60)
+timeout = 60
+
+# Quick connection reachability check timeout in seconds (default: 3)
+connect_timeout = 3
+
+# Approval threshold score (0.0 - 10.0, default: 6.0)
+# Rejections require verdict="reject" AND (score < threshold OR high-severity issue)
+threshold = 6.0
+
+# Maximum character budget for the staged diff sent to LLM (default: 12000)
+max_diff_chars = 12000
+
+# Roast level: mild | spicy | savage (default: spicy)
+roast_level = spicy
+
+# Strict mode: if true, fail-closed (block commit) on Ollama errors (default: false, fail-open)
+strict = false
+
+# Optional path to append verdict history log (e.g. .git/gitgud.log)
+# log_file = .git/gitgud.log
+
+# Custom patterns to ignore from diff (comma-separated or multiple lines)
+# ignore_patterns = package-lock.json, *.min.js, vendor/*, dist/*
