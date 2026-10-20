@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="gavelGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ff88" />
+      <stop offset="100%" stop-color="#00a854" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f141c" />
+      <stop offset="100%" stop-color="#070a0e" />
+    </linearGradient>
+  </defs>
+  <!-- Background terminal tile -->
+  <rect width="64" height="64" rx="14" fill="url(#bgGrad)" stroke="#1f2937" stroke-width="2"/>
+  
+  <!-- Terminal Prompt >_ -->
+  <path d="M12 20 L22 26 L12 32" fill="none" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Stylized Gavel -->
+  <g transform="translate(24, 14) rotate(25 16 16)">
+    <!-- Gavel Head -->
+    <rect x="8" y="4" width="16" height="8" rx="2" fill="url(#gavelGlow)"/>
+    <!-- Gavel Rings -->
+    <rect x="6" y="2" width="4" height="12" rx="1.5" fill="#38ef7d"/>
+    <rect x="22" y="2" width="4" height="12" rx="1.5" fill="#38ef7d"/>
+    <!-- Handle -->
+    <rect x="14" y="12" width="4" height="20" rx="2" fill="#9ca3af"/>
+    <!-- Impact Base -->
+    <rect x="2" y="32" width="28" height="4" rx="2" fill="#374151"/>
+  </g>
+</svg>

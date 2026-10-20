@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace with your actual deployment domain
+Sitemap: https://git-gud-ai.dev/sitemap.xml
